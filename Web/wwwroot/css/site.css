@@ -1,0 +1,275 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+:root {
+    --info: #3c8dbc;
+}
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
+/* Provide sufficient contrast against white background */
+a {
+    color: #0366d6;
+}
+/*
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+*/
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    font-size: 14px;
+    --info: #3c8dbc !important;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.border-top {
+    border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+}
+
+button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there */
+}
+
+.content-wrapper {
+    min-height: calc(100vh - 56px);
+}
+
+/* Validation */
+
+.field-validation-error {
+    font-size: 80%;
+    color: #dc3545;
+    display: block;
+    margin-top: -14px;
+    margin-bottom: 16px;
+}
+
+.pull-right {
+    float: right !important;
+}
+
+/* ICONS */
+
+.fa-trash,
+.fa-trash-alt {
+    color: #dc3545 !important;
+}
+
+html {
+    --scrollbarBG: #f1f1f1;
+    --thumbBG: #cccccc;
+    --thumbHoverBG: #a5a5a5;
+    --info: #4052AB;
+    --primaryBorderColor: #374aa7;
+    --infoLight: #4d5fb9;
+    --infoDark: #394ba4;
+    --info: #3c8dbc;
+    --infoLight: #489ac9;
+    --infoDark: #2a76a1;
+}
+
+.text-ellipsis {
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+}
+
+
+
+/***********************************
+                   Scrollbar
+/************************************/
+
+.scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.scrollbar {
+    scrollbar-width: thin;
+    scrollbar-height: thin;
+    scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+}
+
+    .scrollbar::-webkit-scrollbar-track {
+        background: var(--scrollbarBG);
+        border-radius: 6px;
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb {
+        background-color: var(--thumbBG);
+        border-radius: 6px;
+        /*border: 1px solid var(--thumbBG);*/
+    }
+
+        .scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: var(--thumbHoverBG);
+        }
+
+
+/***********************************************
+                Theme Color Override
+/***********************************************/
+
+/*.navbar-primary {
+    background-color: var(--info);
+}*/
+
+.btn-info, .btn-info.disabled, .btn-info:disabled {
+    background-color: var(--info);
+    border-color: var(--primaryBorderColor)
+}
+
+.btn-outline-info {
+    border-color: var(--primaryBorderColor);
+    color: var(--info)
+}
+
+.btn-info:hover, .btn-info:active, .btn-info.active, .btn-info:focus, .btn-info.focus,
+.btn-info:not(:disabled):not(.disabled):active,
+.btn-info:not(:disabled):not(.disabled).active, .show > .btn-info.dropdown-toggle {
+    background-color: var(--infoDark);
+    border-color: var(--infoDark);
+    color: #fff;
+}
+
+.btn-outline-info:hover, .btn-outline-info:active, .btn-outline-info.active, .btn-outline-info:focus, .btn-outline-info.focus,
+.btn-outline-info:not(:disabled):not(.disabled):active, .btn-outline-info:not(:disabled):not(.disabled).active, .show > .btn-outline-info.dropdown-toggle {
+    background-color: var(--infoDark);
+    border-color: var(--infoDark);
+    color: #fff;
+}
+
+.btn-outline-info.disabled, .btn-outline-info:disabled {
+    color: var(--info);
+}
+
+    .btn-outline-info.disabled:hover, .btn-outline-info:disabled:hover,
+    .btn-outline-info.disabled:active, .btn-outline-info.disabled.active, .btn-outline-info:disabled:active, .btn-outline-info:disabled.active,
+    .btn-outline-info.disabled:focus, .btn-outline-info.disabled.focus, .btn-outline-info:disabled:focus, .btn-outline-info:disabled.focus {
+        color: #fff;
+    }
+
+
+
+
+
+
+.e-treeview .e-list-item.e-active > .e-fullrow {
+    background-color: var(--info);
+    border-color: var(--info)
+}
+
+.e-treeview .e-list-item.e-active.e-hover > .e-fullrow {
+    background-color: var(--infoDark);
+    border-color: var(--infoDark)
+}
+
+
+.text-primary {
+    color: var(--info) !important;
+}
+
+.e-control, .e-css {
+    font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+}
+
+@media (min-width: 768px) {
+    .e-control, .e-css, .e-treeview .e-list-text {
+        font-size: 16px;
+    }
+}
+
+.bootbox:not(.bootbox-confirm) .bootbox-close-button.close {
+    display: none;
+}
+
+.lang-flag {
+    height: 30px;
+    border: 3px solid rgb(255 255 255 / 20%);
+    border-radius: 50%;
+}
+
+a.setLanguage {
+    cursor: pointer;
+}
+
+.grayscale {
+    filter: grayscale(100%);
+}
+
+.lang-flag.grayscale {
+    opacity: 0.6;
+}
+
+/*****************************
+         Vue tables 
+*****************************/
+
+.VueTables__search {
+    float: left;
+    width: 40%;
+}
+
+.VueTables__limit {
+    float: right;
+    width: 40%;
+}
+
+.VueTables__limit .VueTables__limit-field {
+    width: 100%;
+    text-align: right;
+}
+
+
+.VueTables__search label, .VueTables__limit label {
+    display: none;
+}
+
+.VuePagination__count {
+    max-width: fit-content;
+    align-self: center;
+    text-align: end !important;
+    flex: 1;
+}

@@ -1,0 +1,178 @@
+﻿@page
+@model ADF.Web.Pages.Pipelines.IndexModel
+@{
+}
+
+<style>
+    .table-body{
+        padding-left:1em;
+        padding-right:1em;
+    }
+
+    .fa,
+    .fas {
+        font-family: 'Font Awesome 5 Pro' !important;
+        font-weight: 900 !important;
+    }
+
+
+    .far {
+        font-family: 'Font Awesome 5 Pro' !important;
+        font-weight: 400 !important;
+    }
+
+    .fal {
+        font-family: 'Font Awesome 5 Pro' !important;
+        font-weight: 300 !important;
+    }
+
+    .fad {
+        position: relative;
+        font-family: 'Font Awesome 5 Duotone' !important;
+        font-weight: 900 !important;
+    }
+
+    .fab {
+        font-family: 'Font Awesome 5 Brands' !important;
+        font-weight: 400 !important;
+    }
+
+    .e-rowcell.e-templatecell.isRunnable{
+        text-align: center
+    }
+
+    .e-grid .e-content {
+        max-height: calc(100vh - 305px) !important;
+    }
+</style>
+
+<div id="pipeline">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Pipeline settings</h1>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+    <div class="table-body">
+        <ejs-grid :data-source="data" :toolbar='toolbar' :allow-paging="true" :toolbar-click='onToolbarItemClick'
+                  :page-settings="pageSettings">
+            <e-columns>
+                <e-column field='isRunnable' header-text='Is Runnable' :custom-attributes="isRunnableCustomAttrs" width=60 :template="isRunnableCheckboxTemplate"></e-column>
+                <e-column field='name' header-text='Name' width=120></e-column>
+                <e-column field='displayName' header-text='Display Name' width=120 :template="displayNameInputTemplate"></e-column>
+                <e-column field='createdBy' header-text='Created By' width=120></e-column>
+                <e-column field='createdOn' header-text='Created Date' width=120></e-column>
+            </e-columns>
+        </ejs-grid>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        const { ButtonPlugin } = ejs.buttons;
+        const { GridPlugin, Page, Toolbar, Edit } = ejs.grids;
+
+        Vue.use(ButtonPlugin);
+        Vue.use(GridPlugin);
+
+
+        var app = new Vue({
+            el:'#pipeline',
+            data() {
+                const app = this;
+                return {
+                    baseUrl: "/pipelines",
+                    data:[],
+                    toolbar: [{ text: 'Pull Pipelines', tooltipText: 'Pull Pipelines', prefixIcon: 'fas fa-sync-alt', id: 'sync' }, 'Search'],
+                    pageSettings: {
+                        pageSizes: [10, 20, 50, 100],
+                        pageSize: 20,
+                        pageCount: 5
+                    },
+                    isRunnableCustomAttrs: { class: 'isRunnable' },
+                    displayNameInputTemplate: () => {
+                        return {
+                            template: Vue.component('displayNameInputTemplate', {
+                                template: `<input type="text" class="form-control form-control-sm" v-model='data.displayName' @@change="saveDisplayName($event,data)"/>`,
+                                data() { return { data: {} }; },
+                                methods: {
+                                    saveDisplayName(e, row) {
+
+                                        const model = {
+                                            id: row.id,
+                                            displayName: row.displayName,
+                                            isRunnable: row.isRunnable
+                                        }
+
+                                        app.saveDisplayName(model)
+                                    }
+                                }
+                            })
+                        }
+                    },
+                    isRunnableCheckboxTemplate: () => {
+                        return {
+                            template: Vue.component('isRunnableCheckboxTemplate', {
+                                template: `<input v-model='data.isRunnable' @@change="saveDisplayName($event,data)" type="checkbox"/>`,
+                                data() { return { data: {} }; },
+                                methods: {
+                                    saveDisplayName(e, row) {
+
+                                        const model = {
+                                            id: row.id,
+                                            displayName: row.displayName,
+                                            isRunnable: row.isRunnable
+                                        }
+
+                                        app.saveDisplayName(model)
+                                    }
+                                }
+                            })
+                        }
+                    },
+                };
+            },
+            provide: {
+                grid: [Page, Edit, Toolbar]
+            },
+            mounted:function(){
+                this.getPipelineList();                
+            },
+            methods:{
+                onSync(){
+                    helper.get(this.baseUrl + "/SyncPipeLine", null, (response) => {
+                        if (response.success) {
+                            this.getPipelineList();
+                        }
+                    });
+                },
+                getPipelineList(){
+                    helper.get(this.baseUrl+'/GetPipelineList', null, (response) => {
+                        this.data = response.data;
+                        this.data.map((item)=>{
+                            item.createdOn = moment(item.createdOn).utc(true).format("DD MMM yyyy hh:mm a");
+                        });
+                    });
+                },
+                saveDisplayName(row) {
+
+                    helper.post(this.baseUrl + "/UpdatePipeLine", { ...row}, (response) => {
+                        if (response.success) {
+                            this.getPipelineList();
+                        }
+                    }, true, true)
+                },
+                onToolbarItemClick(args) {
+                    if (args.item.id === 'sync') {
+                        this.onSync();
+                    }
+                },
+            }
+        })
+
+    </script>
+}

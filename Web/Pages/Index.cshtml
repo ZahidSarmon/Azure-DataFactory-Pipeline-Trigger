@@ -1,0 +1,203 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<style>
+    .table-body {
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+
+    .fa,
+    .fas {
+        font-family: 'Font Awesome 5 Pro' !important;
+        font-weight: 900 !important;
+    }
+
+
+    .far {
+        font-family: 'Font Awesome 5 Pro' !important;
+        font-weight: 400 !important;
+    }
+
+    .fal {
+        font-family: 'Font Awesome 5 Pro' !important;
+        font-weight: 300 !important;
+    }
+
+    .fad {
+        position: relative;
+        font-family: 'Font Awesome 5 Duotone' !important;
+        font-weight: 900 !important;
+    }
+
+    .fab {
+        font-family: 'Font Awesome 5 Brands' !important;
+        font-weight: 400 !important;
+    }
+
+    .e-grid .e-content {
+        max-height: calc(100vh - 305px) !important;
+
+    }
+</style>
+
+<div id="pipeline">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Pipeline Run</h1>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+    @*  <div class="run-all">
+    <button type="button" class="btn btn-info" v-on:click="onRun"><i class="fas fa-play-circle"></i> Run All</button>
+    </div> *@
+    <div class="table-body">
+        <ejs-grid :data-source="data" :toolbar='toolbar' :allow-paging="true" :toolbar-click='onToolbarItemClick'
+                  :page-settings="pageSettings">
+            <e-columns>
+                <e-column :template="runTemplate" width=60></e-column>
+                <e-column field='displayName' header-text='Display Name' width=120></e-column>
+                <e-column field='createdBy' header-text='Created By' width=100></e-column>
+                <e-column field='createdOn' header-text='Created Date' width=100></e-column>
+                <e-column field='lastRunBy' header-text='Last Run By' width=100></e-column>
+                <e-column field='lastRunDate' header-text='Last Run Date' width=100></e-column>
+                <e-column field='status' header-text='Status' width=80></e-column>
+            </e-columns>
+        </ejs-grid>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        const { ButtonPlugin } = ejs.buttons;
+        const { GridPlugin, Page, Toolbar, Edit } = ejs.grids;
+
+        Vue.use(ButtonPlugin);
+        Vue.use(GridPlugin);
+
+
+        var app = new Vue({
+            el: '#pipeline',
+            data() {
+                const app = this;
+                return {
+                    baseUrl: "/pipelines",
+                    data: [],
+                    toolbar: [{ text: 'Run All', tooltipText: 'Run All', prefixIcon: 'fas fa-play-circle', id: 'run' }, { text: 'Refresh', tooltipText: 'Refresh', prefixIcon: 'fas fa-redo-alt', id: 'refresh' }, 'Search'],
+                    pageSettings: {
+                        pageSizes: [10, 20, 50, 100],
+                        pageSize: 20,
+                        pageCount: 5
+                    },
+                    runTemplate: () => {
+                        return {
+                            template: Vue.component('runTemplate', {
+                                template: `<button  class="btn btn-outline-success" @@click="runStandalone($event,data)" :disabled="isRunDisabled"><i class="fas fa-play"></i> Run</button>`,
+                                data() { return { data: {} }; },
+                                computed: {
+                                    isRunDisabled() {
+                                        return this.data.status == 'InProgress' || this.data.status == 'Queued';
+                                    }
+                                },
+                                methods: {
+                                    runStandalone(e, row) {
+                                        app.onRunStandalone(row.id);
+                                    },
+                                    isDisabled(e, row) {
+                                        app.isDisabled(row.status);
+                                    }
+                                }
+                            })
+                        }
+                    },
+                };
+            },
+            provide: {
+                grid: [Page, Edit, Toolbar]
+            },
+            mounted: function () {
+                this.getPipelineList();
+            },
+            methods: {
+                onRun() {
+
+                    let pipelineIds = [];
+
+                    this.data.map((item) => {
+                        pipelineIds.push(item.id);
+                    });
+
+                    let post_data = {
+                        pipelines: pipelineIds
+                    }
+
+                    helper.post(this.baseUrl + "/RunPipeline", post_data, (response) => {
+                        if (response.success) {
+                            this.getPipelineList();
+                        }
+                    });
+                },
+                onRunStandalone(pipelineId) {
+                    helper.post(this.baseUrl + "/RunPipelineStandalone", { pipelineId: pipelineId }, (response) => {
+                        if (response.success) {
+                            this.getPipelineList();
+                        }
+                    }, true, true)
+                },
+                onRefresh() {
+                    let pipelineIds = [];
+
+                    this.data.map((item) => {
+                        pipelineIds.push(item.id);
+                    });
+
+                    let post_data = {
+                        pipelines: pipelineIds
+                    }
+
+                    helper.post(this.baseUrl + "/StartPipeline", post_data, (response) => {
+                        if (response.success) {
+                            this.getPipelineList();
+                        }
+                    });
+                },
+                getPipelineList() {
+                    helper.get(this.baseUrl + '/GetRunnablePipelineList', null, (response) => {
+                        this.data = response.data;
+                        this.data.map((item) => {
+                            if (item.createdOn) {
+                                item.createdOn = moment(item.createdOn).format("DD MMM yyyy hh:mm a");
+                            }
+                            if (item.lastRunDate) {
+                                item.lastRunDate = moment(item.lastRunDate).format("DD MMM yyyy hh:mm a");
+                            }
+                        });
+                    });
+                },
+                onToolbarItemClick(args) {
+                    if (args.item.id === 'run') {
+                        this.onRun();
+                    }
+                    if (args.item.id === 'refresh') {
+                        this.onRefresh();
+                    }
+                },
+                isDisabled(data) {
+                    console.log("data:", data);
+                    if (row.status == "Succeeded") {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        })
+
+    </script>
+}
